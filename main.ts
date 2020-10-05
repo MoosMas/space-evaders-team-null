@@ -11,9 +11,6 @@
  * Start een animatie als de eindbaas verslagen is.
  */
 /**
- * Haalt de particles vande animatie weg als ze de rand aanraken.
- */
-/**
  * Genereert een getal tussen de 1 en 3, als dit 2 is wordt er een enemtShipSmall gespawned.
  */
 /**
@@ -58,7 +55,9 @@ function spawnEnemyShipLarge () {
     }
 }
 function gameWonAnimation () {
-    enemyShipLargeBullet.delete()
+    if (enemyShipLargeBullet) {
+        enemyShipLargeBullet.delete()
+    }
     ship = game.createSprite(2, 0)
     ship.set(LedSpriteProperty.Blink, 100)
     list = []
@@ -87,7 +86,6 @@ function gameWonAnimation () {
             value.move(1)
         }
     }
-    playerSprite.delete()
     basic.pause(500)
     basic.showString("WON SCORE")
     basic.showNumber(score)
@@ -143,14 +141,6 @@ eventInterval = 1000
 enemyShipLargeBulletInterval = 400
 maxScore = 50
 bossIsDefeated = 0
-basic.forever(function () {
-    for (let value2 of list) {
-        if (value2.get(LedSpriteProperty.X) == 0 || value2.get(LedSpriteProperty.X) == 4 || value2.get(LedSpriteProperty.Y) == 4) {
-            value2.delete()
-            basic.pause(200)
-        }
-    }
-})
 /**
  * Kijkt of het gevecht met de eindbaas begonnen is en als dit zo is haalt hij de oude kogel van het schip weg.
  */
