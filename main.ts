@@ -34,8 +34,8 @@
  */
 input.onButtonPressed(Button.A, function () {
     playerSprite.move(-1)
-    if (score < maxScore) {
-        score += 1
+    if (playerScore < maxScore) {
+        playerScore += 1
     }
 })
 function spawnEnemyShipLarge () {
@@ -58,37 +58,37 @@ function gameWonAnimation () {
     if (enemyShipLargeBullet) {
         enemyShipLargeBullet.delete()
     }
-    ship = game.createSprite(2, 0)
-    ship.set(LedSpriteProperty.Blink, 100)
-    list = []
+    enemyShipToExplode = game.createSprite(2, 0)
+    enemyShipToExplode.set(LedSpriteProperty.Blink, 100)
+    explosionParticlesList = []
     basic.pause(1000)
-    ship.delete()
+    enemyShipToExplode.delete()
     explosionParticleLeft = game.createSprite(1, 0)
     explosionParticleLeft.set(LedSpriteProperty.Direction, 270)
-    list.push(explosionParticleLeft)
+    explosionParticlesList.push(explosionParticleLeft)
     explosionParticleDownLeft = game.createSprite(1, 1)
     explosionParticleDownLeft.set(LedSpriteProperty.Direction, 225)
-    list.push(explosionParticleDownLeft)
+    explosionParticlesList.push(explosionParticleDownLeft)
     explosionParticleRight = game.createSprite(3, 0)
     explosionParticleRight.set(LedSpriteProperty.Direction, 90)
-    list.push(explosionParticleRight)
+    explosionParticlesList.push(explosionParticleRight)
     explosionParticleDownRight = game.createSprite(3, 1)
     explosionParticleDownRight.set(LedSpriteProperty.Direction, 135)
-    list.push(explosionParticleDownRight)
+    explosionParticlesList.push(explosionParticleDownRight)
     explosionParticleDown = game.createSprite(2, 1)
     explosionParticleDown.set(LedSpriteProperty.Direction, 180)
-    list.push(explosionParticleDown)
+    explosionParticlesList.push(explosionParticleDown)
     basic.pause(100)
     for (let index = 0; index < 4; index++) {
         basic.pause(200)
-        for (let value of list) {
-            value.change(LedSpriteProperty.Brightness, -75)
-            value.move(1)
+        for (let explosionParticle of explosionParticlesList) {
+            explosionParticle.change(LedSpriteProperty.Brightness, -75)
+            explosionParticle.move(1)
         }
     }
     basic.pause(500)
     basic.showString("WON SCORE")
-    basic.showNumber(score)
+    basic.showNumber(playerScore)
 }
 input.onButtonPressed(Button.AB, function () {
     if (bossIsDefeated < 1) {
@@ -105,8 +105,8 @@ input.onButtonPressed(Button.AB, function () {
 })
 input.onButtonPressed(Button.B, function () {
     playerSprite.move(1)
-    if (score < maxScore) {
-        score += 1
+    if (playerScore < maxScore) {
+        playerScore += 1
     }
 })
 let bossBattleHasStarted = 0
@@ -118,8 +118,8 @@ let explosionParticleDownRight: game.LedSprite = null
 let explosionParticleRight: game.LedSprite = null
 let explosionParticleDownLeft: game.LedSprite = null
 let explosionParticleLeft: game.LedSprite = null
-let list: game.LedSprite[] = []
-let ship: game.LedSprite = null
+let explosionParticlesList: game.LedSprite[] = []
+let enemyShipToExplode: game.LedSprite = null
 let enemyShipLargeBullet: game.LedSprite = null
 let enemyShipLargeBodyRight: game.LedSprite = null
 let enemyShipLargeBodyFront: game.LedSprite = null
@@ -129,11 +129,11 @@ let bossIsDefeated = 0
 let maxScore = 0
 let enemyShipLargeBulletInterval = 0
 let playerSprite: game.LedSprite = null
-let score = 0
+let playerScore = 0
 let eventInterval = 0
 eventInterval = 1000
 game.setLife(3)
-score = 0
+playerScore = 0
 let lives = 3
 playerSprite = game.createSprite(2, 4)
 playerSprite.set(LedSpriteProperty.Brightness, 130)
@@ -144,11 +144,8 @@ bossIsDefeated = 0
 /**
  * Kijkt of het gevecht met de eindbaas begonnen is en als dit zo is haalt hij de oude kogel van het schip weg.
  */
-/**
- * Kijkt of dingen elkaar aanraken en wat er dan moet gebeuren.
- */
 basic.forever(function () {
-    while (score < maxScore && game.isRunning()) {
+    while (playerScore < maxScore && game.isRunning()) {
         randomNumber = randint(1, 3)
         if (randomNumber == 2) {
             if (enemyShipSmallList.length < 5) {
@@ -164,15 +161,18 @@ basic.forever(function () {
     }
 })
 /**
+ * Kijkt of dingen elkaar aanraken en wat er dan moet gebeuren.
+ */
+/**
  * Kijkt of een enemyShipSmall de kogel van de speler aanraakt. Als dit zo is worden de enemyShipSmall en kogel verwijderd en krijgt de speler 5 punten.
  */
 basic.forever(function () {
-    for (let value7 of enemyShipSmallList) {
-        if (playerBullet && value7.isTouching(playerBullet)) {
+    for (let enemyShipSmallTouchesBullet of enemyShipSmallList) {
+        if (playerBullet && enemyShipSmallTouchesBullet.isTouching(playerBullet)) {
             playerBullet.delete()
-            enemyShipSmallList.removeAt(enemyShipSmallList.indexOf(value7))
-            value7.delete()
-            score += 5
+            enemyShipSmallList.removeAt(enemyShipSmallList.indexOf(enemyShipSmallTouchesBullet))
+            enemyShipSmallTouchesBullet.delete()
+            playerScore += 5
         }
     }
 })
@@ -200,7 +200,7 @@ basic.forever(function () {
             enemyShipLargeBodyLeft.delete()
             enemyShipLargeBodyRight.delete()
             playerBullet.delete()
-            score += lives * 15
+            playerScore += lives * 15
             gameWonAnimation()
         }
         if (enemyShipLargeBullet && playerBullet.isTouching(enemyShipLargeBullet)) {
@@ -227,37 +227,37 @@ basic.forever(function () {
  * Verplaatst de enemyShipSmall naar beneden elke (0.3*eventInterval) seconden.
  */
 basic.forever(function () {
-    for (let value4 of enemyShipSmallList) {
+    for (let enemyShipSmallMoveDown of enemyShipSmallList) {
         basic.pause(eventInterval * 0.3)
-        value4.change(LedSpriteProperty.Y, 1)
-        value4.set(LedSpriteProperty.Brightness, 150)
+        enemyShipSmallMoveDown.change(LedSpriteProperty.Y, 1)
+        enemyShipSmallMoveDown.set(LedSpriteProperty.Brightness, 150)
     }
 })
 basic.forever(function () {
-    for (let value5 of enemyShipSmallList) {
-        if (value5.get(LedSpriteProperty.Y) == 4) {
+    for (let enemyShipSmallTouchesBottom of enemyShipSmallList) {
+        if (enemyShipSmallTouchesBottom.get(LedSpriteProperty.Y) == 4) {
             basic.pause(200)
-            enemyShipSmallList.removeAt(enemyShipSmallList.indexOf(value5))
-            value5.delete()
+            enemyShipSmallList.removeAt(enemyShipSmallList.indexOf(enemyShipSmallTouchesBottom))
+            enemyShipSmallTouchesBottom.delete()
         }
     }
 })
 basic.forever(function () {
-    for (let value6 of enemyShipSmallList) {
-        if (value6.isTouching(playerSprite)) {
+    for (let enemyShipSmallTouchesPlayer of enemyShipSmallList) {
+        if (enemyShipSmallTouchesPlayer.isTouching(playerSprite)) {
             game.removeLife(1)
-            value6.delete()
-            enemyShipSmallList.removeAt(enemyShipSmallList.indexOf(value6))
+            enemyShipSmallTouchesPlayer.delete()
+            enemyShipSmallList.removeAt(enemyShipSmallList.indexOf(enemyShipSmallTouchesPlayer))
         }
     }
 })
 basic.forever(function () {
-    game.setScore(score)
-    eventInterval = 1000 - score * 10
-    if (score >= maxScore && bossBattleHasStarted < 1) {
-        for (let value3 of enemyShipSmallList) {
+    game.setScore(playerScore)
+    eventInterval = 1000 - playerScore * 10
+    if (playerScore >= maxScore && bossBattleHasStarted < 1) {
+        for (let enemyShipSmallClearAll of enemyShipSmallList) {
             enemyShipSmallList = []
-            value3.delete()
+            enemyShipSmallClearAll.delete()
         }
         spawnEnemyShipLarge()
         bossBattleHasStarted += 1
