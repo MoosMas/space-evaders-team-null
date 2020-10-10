@@ -20,6 +20,12 @@
  * Spawned een eindbaas.
  */
 /**
+ * Kijkt of een enemyShipSmall de kogel van de speler aanraakt. Als dit zo is worden de enemyShipSmall en kogel verwijderd en krijgt de speler 5 punten.
+ */
+/**
+ * Verplaatst de enemyShipSmall naar beneden elke (0.3*eventInterval) seconden.
+ */
+/**
  * Kijkt of er een enemyShipSmall de onderste rand aanraakt. Als dit zo is wordt het schip verwijderd.
  */
 /**
@@ -95,7 +101,7 @@ input.onButtonPressed(Button.AB, function () {
         playerBullet = game.createSprite(playerSprite.get(LedSpriteProperty.X), 3)
         playerBullet.set(LedSpriteProperty.Blink, 350)
         while (playerBullet) {
-            basic.pause(eventInterval)
+            basic.pause(eventInterval * 0.7)
             playerBullet.change(LedSpriteProperty.Y, -1)
             if (playerBullet.isDeleted()) {
                 break;
@@ -144,6 +150,9 @@ bossIsDefeated = 0
 /**
  * Kijkt of het gevecht met de eindbaas begonnen is en als dit zo is haalt hij de oude kogel van het schip weg.
  */
+/**
+ * Kijkt of dingen elkaar aanraken en wat er dan moet gebeuren.
+ */
 basic.forever(function () {
     while (playerScore < maxScore && game.isRunning()) {
         randomNumber = randint(1, 3)
@@ -160,12 +169,6 @@ basic.forever(function () {
         enemyShipLargeBullet.delete()
     }
 })
-/**
- * Kijkt of dingen elkaar aanraken en wat er dan moet gebeuren.
- */
-/**
- * Kijkt of een enemyShipSmall de kogel van de speler aanraakt. Als dit zo is worden de enemyShipSmall en kogel verwijderd en krijgt de speler 5 punten.
- */
 basic.forever(function () {
     for (let enemyShipSmallTouchesBullet of enemyShipSmallList) {
         if (playerBullet && enemyShipSmallTouchesBullet.isTouching(playerBullet)) {
@@ -223,9 +226,6 @@ basic.forever(function () {
         }
     }
 })
-/**
- * Verplaatst de enemyShipSmall naar beneden elke (0.3*eventInterval) seconden.
- */
 basic.forever(function () {
     for (let enemyShipSmallMoveDown of enemyShipSmallList) {
         basic.pause(eventInterval * 0.3)
